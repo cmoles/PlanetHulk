@@ -114,11 +114,14 @@ class Hulk(Fighter):
 
 def flip_offsets(images, offsets):
     offsetmin   = min([offset[0] for offset in offsets])
+    offsetmax   = max([offset[0] for offset in offsets])
     rights      = [offset[0] + image[2] 
                     for image, offset in zip(images, offsets)]
+    rightmin    = min(rights)
     rightmax    = max(rights)
-    return [(rightmax - right + offsetmin, offset[1])
-        for right, offset in zip(rights, offsets)]
+    return [(rightmax - (rightmax - rightmin) - right - \
+            (offsetmax - offsetmin), offset[1])
+            for right, offset in zip(rights, offsets)]
 
 def load_sliced_sprites(sprite_images, filename, flip=False):
     images = []
