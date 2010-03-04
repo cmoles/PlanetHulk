@@ -1,6 +1,3 @@
-# Characters - Hulk, Spider-man, Captain America, Dr. Doom
-    # Animations - Walk, Run, Fly, Fight
-    # Health
 import os 
 import pygame
 from pygame.locals import *
@@ -20,9 +17,12 @@ background.fill((255,175,175))
 screen.blit(background, (0, 0))
 
 class Animation():
-    def __init__(self,images,offsets,file_image,fps=10):
-        self._images        = load_sliced_sprites(images,file_image)
+    def __init__(self,images,offsets,file_image,flip=False,fps=10):
+        self._images        = load_sliced_sprites(images,file_image,flip)
+        self._images2       = load_sliced_sprites(images,file_image,not flip)
+        self.flip           = flip
         self._offsets       = offsets
+        self._offsets2      = flip_offsets(images,offsets)
         self._delay         = 1000 / fps
         self.start(0)
     def __str__(self):
@@ -30,63 +30,132 @@ class Animation():
     def start(self,t):
         self._last_update   = t
         self._frame         = 0
-        self.image          = self._images[self._frame]
-        self.offpt          = self._offsets[self._frame]
+        self.done           = False
+        self.setimg()
+    def setimg(self):
+        if self.flip:
+            self.image = self._images2[self._frame]
+            self.offpt = self._offsets2[self._frame]
+        else:
+            self.image = self._images[self._frame]
+            self.offpt = self._offsets[self._frame]
     def update(self,t):
         if t - self._last_update >= self._delay:
             self._frame += 1
             if self._frame >= len(self._images):
                 self._frame = 0
-            self.image = self._images[self._frame]
-            self.offpt = self._offsets[self._frame]
+                self.done = True
+                return
+            self.setimg()
             self._last_update = t
 
 class Fighter():
-    def __init__(self,health,location):
+    def __init__(self,health,location,):
         self.health     = health
         self.location   = location
+        self.position   = location
         self._animation = ''
         self.animations = {}
+        self.direction  = 1
     def __str__(self):
-        """
-        anims = "\n\t".join("%s - %s" % (key, anim)
-                    for key, anim in self.animations.items())
-        """
         if self.animations:
-            frame = "%s (%s)" % (self.state()._frame,len(self.state()._images))
+            frame = "%s (%s)" % \
+                (self.state()._frame,len(self.state()._images))
         else:
             frame = ""
         return "%s - %s : %s - %s" % \
             (self.health,self.location,self._animation,frame)
     def state(self):
         return self.animations[self._animation]
+    def shift(self):
+        x,y = self.location
+        j,k = self.state().offpt
+        self.position = x+j,y+k
+    def turn(self,direction=None):
+        if direction == None:
+            if self.direction == 1:
+                self.direction = -1
+                self.state().flip = True
+            else:
+                self.direction = 1
+                self.state().flip = False
+        else:
+            self.direction = direction
+            self.state().flip = direction == -1 and True
+    def change(self,state,t):
+        self._animation = state
+        self.turn(self.direction)
+        self.state().start(t)
     def update(self,t):
         self.state().update(t)
     def render(self,screen):
-        screen.blit(self.state().image,self.location)
+        self.shift()
+        screen.blit(self.state().image,self.position)
 
 class Hulk(Fighter):
     def __init__(self,location):
-        Fighter.__init__(self,999,location) 
-        self._animation = 'walk'
+        Fighter.__init__(self,999,location,) 
+        self._animation = 'stay'
         for key, val in hulk_data.items():
             self.animations[key] = Animation(val['rects'],
                                              val['offpt'],
                                              val['image'])
     def update(self,t):
         Fighter.update(self,t)
+        if self.state().done:
+            self.change('stay',t)
+    def control(self,key,t):
+        if key == K_h:
+            self.turn(-1) 
+        if key == K_l:
+            self.turn(1)
+        if key == K_SPACE:
+            self.change('punk',t)
 
-def load_sliced_sprites(sprite_images, filename):
+def flip_offsets(images, offsets):
+    offsetmin   = min([offset[0] for offset in offsets])
+    rights      = [offset[0] + image[2] 
+                    for image, offset in zip(images, offsets)]
+    rightmax    = max(rights)
+    return [(rightmax - right + offsetmin, offset[1])
+        for right, offset in zip(rights, offsets)]
+
+def load_sliced_sprites(sprite_images, filename, flip=False):
     images = []
     sheet  = pygame.image.load(os.path.join('data', filename)).convert_alpha()
     for srect in sprite_images:
-        #simg = pygame.transform.flip(sheet.subsurface(srect), 1, 0).convert()
-        simg = sheet.subsurface(srect).convert()
+        if flip:
+            simg = pygame.transform.flip(sheet.subsurface(srect), 1, 0).convert()
+        else:
+            simg = sheet.subsurface(srect).convert()
         simg.set_colorkey(simg.get_at((0, 0)), RLEACCEL)
         images.append(simg)
     return images
 
 def run():
+    hulk = Hulk([50,20])
+    hulk2 = Hulk([50,100])
+    user_keys = [K_h,K_j,K_k,K_l,K_SPACE]
+    hulk.turn()
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT               \
+                    or event.type == KEYDOWN    \
+                    and event.key in [K_q, K_ESCAPE]:
+                return
+            if event.type == KEYDOWN:
+                if event.key in [K_f]:
+                    pygame.display.toggle_fullscreen()
+                if event.key in user_keys:
+                    hulk.control(event.key,pygame.time.get_ticks())
+        screen.blit(background, (0, 0))
+        hulk.update(pygame.time.get_ticks())
+        hulk2.update(pygame.time.get_ticks())
+        hulk.render(screen)
+        hulk2.render(screen)
+        pygame.display.update()
+
+def run2():
     hero = Fighter(100,[10,20])
     hulk = Hulk([50,20])
     print "hero - %s" % hero
