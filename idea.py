@@ -25,8 +25,6 @@ class Animation():
         self._offsets2      = flip_offsets(images,offsets)
         self._delay         = 1000 / fps
         self.start(0)
-    def __str__(self):
-        return "[%s - %s]" % (self.image,self.offpt)
     def start(self,t):
         self._last_update   = t
         self._frame         = 0
@@ -57,14 +55,6 @@ class Fighter():
         self._animation = ''
         self.animations = {}
         self.direction  = 1
-    def __str__(self):
-        if self.animations:
-            frame = "%s (%s)" % \
-                (self.state()._frame,len(self.state()._images))
-        else:
-            frame = ""
-        return "%s - %s : %s - %s" % \
-            (self.health,self.location,self._animation,frame)
     def state(self):
         return self.animations[self._animation]
     def shift(self):
@@ -102,8 +92,12 @@ class Hulk(Fighter):
                                              val['image'])
     def update(self,t):
         Fighter.update(self,t)
-        if self.state().done:
-            self.change('stay',t)
+        if self._animation == 'jump':
+            if self.state().done:
+                self.change('stay',t)
+        if self._animation == 'punk':
+            if self.state().done:
+                self.change('stay',t)
     def control(self,key,t):
         if key == K_h:
             self.turn(-1) 
@@ -156,19 +150,6 @@ def run():
         hulk2.update(pygame.time.get_ticks())
         hulk.render(screen)
         hulk2.render(screen)
-        pygame.display.update()
-
-def run2():
-    hero = Fighter(100,[10,20])
-    hulk = Hulk([50,20])
-    print "hero - %s" % hero
-    print "hulk - %s" % hulk
-    for t in xrange(0,1000,100):
-        t += 100
-        screen.blit(background, (0, 0))
-        hulk.update(t)
-        hulk.render(screen)
-        print "hulk - %s" % hulk
         pygame.display.update()
 
 if __name__ == "__main__": run()
