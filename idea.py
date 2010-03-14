@@ -55,8 +55,11 @@ class Fighter():
         self._animation = ''
         self.animations = {}
         self.direction  = 1
+        self.velocity   = (0,0)
     def state(self):
         return self.animations[self._animation]
+    def anime(self):
+        return self._animation
     def shift(self):
         x,y = self.location
         j,k = self.state().offpt
@@ -76,7 +79,14 @@ class Fighter():
         self._animation = state
         self.turn(self.direction)
         self.state().start(t)
+    def move(self,shift):
+        x,y = self.location
+        w,v = shift
+        self.location = x+w,y+v
+    def force(self,f):
+        self.velocity = f
     def update(self,t):
+        self.move(self.velocity)
         self.state().update(t)
     def render(self,screen):
         self.shift()
@@ -92,19 +102,30 @@ class Hulk(Fighter):
                                              val['image'])
     def update(self,t):
         Fighter.update(self,t)
-        if self._animation == 'jump':
+        if self.anime() == 'jump':
             if self.state().done:
                 self.change('stay',t)
-        if self._animation == 'punk':
+                self.force((0,0))
+        if self.anime() == 'punk':
             if self.state().done:
                 self.change('stay',t)
+                self.force((0,0))
     def control(self,key,t):
-        if key == K_h:
+        if key == K_s:
+            if not self.anime() == 'stay':
+                self.change('stay',t)
+                self.force((0,0))
+        if key == K_a:
             self.turn(-1) 
-        if key == K_l:
+            self.change('walk',t)
+            self.force((-.5,0))
+        if key == K_d:
             self.turn(1)
+            self.change('walk',t)
+            self.force((.5,0))
         if key == K_SPACE:
             self.change('punk',t)
+            self.force((0,0))
 
 def flip_offsets(images, offsets):
     offsetmin   = min([offset[0] for offset in offsets])
@@ -132,7 +153,7 @@ def load_sliced_sprites(sprite_images, filename, flip=False):
 def run():
     hulk = Hulk([50,20])
     hulk2 = Hulk([50,100])
-    user_keys = [K_h,K_j,K_k,K_l,K_SPACE]
+    user_keys = [K_a,K_w,K_s,K_d,K_SPACE]
     hulk.turn()
     while True:
         for event in pygame.event.get():
