@@ -18,7 +18,8 @@ hulk_data = {
             (  +3,  -3),
             (  -5,  -1),
             (  -5,  -1),],
-        'image':'theincrediblehulkwu6.png'
+       'slide':-10,
+       'image':'theincrediblehulkwu6.png'
     },
    'dash': {
        'rects':[
@@ -40,7 +41,8 @@ hulk_data = {
             ( -0,   15),
             ( -6,   17),
             ( +3,   9),],
-        'image':'theincrediblehulkwu6.png'
+       'slide':0,
+       'image':'theincrediblehulkwu6.png'
     },
    'punk': {
        'rects':[
@@ -56,7 +58,8 @@ hulk_data = {
             (  2,   1),
             (  3,   2),
             (  3,   1),],
-        'image':'theincrediblehulkwu6.png'
+       'slide':3,
+       'image':'theincrediblehulkwu6.png'
     },
    'stay': {
        'rects':[
@@ -70,6 +73,7 @@ hulk_data = {
             (  0,   0),
             (  0,   0),
             ( -1,   0),],
-        'image':'theincrediblehulkwu6.png'
+       'slide':0,
+       'image':'theincrediblehulkwu6.png'
    }
 }
