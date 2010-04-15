@@ -2,7 +2,7 @@ import os
 import pygame
 from pygame.locals import *
 from random import randint
-from hulk import hulk_data
+execfile('hulk.py')
 
 RESOLUTION = (640, 480)
 
@@ -17,12 +17,12 @@ background.fill((255,175,175))
 screen.blit(background, (0, 0))
 
 class Animation():
-    def __init__(self,images,offsets,file_image,flip=False,fps=10):
-        self._images        = load_sliced_sprites(images,file_image,flip)
-        self._images2       = load_sliced_sprites(images,file_image,not flip)
+    def __init__(self,images,offsets,slide,file_image,flip=False,fps=10):
+        self._imagesR       = load_sliced_sprites(images,file_image,flip)
+        self._imagesL       = load_sliced_sprites(images,file_image,not flip)
         self.flip           = flip
-        self._offsets       = offsets
-        self._offsets2      = flip_offsets(images,offsets)
+        self._offsetsR      = offsets
+        self._offsetsL      = flip_offsets(images,offsets,slide)
         self._delay         = 1000 / fps
         self.start(0)
     def start(self,t):
@@ -32,15 +32,15 @@ class Animation():
         self.setimg()
     def setimg(self):
         if self.flip:
-            self.image = self._images2[self._frame]
-            self.offpt = self._offsets2[self._frame]
+            self.image = self._imagesL[self._frame]
+            self.offpt = self._offsetsL[self._frame]
         else:
-            self.image = self._images[self._frame]
-            self.offpt = self._offsets[self._frame]
+            self.image = self._imagesR[self._frame]
+            self.offpt = self._offsetsR[self._frame]
     def update(self,t):
         if t - self._last_update >= self._delay:
             self._frame += 1
-            if self._frame >= len(self._images):
+            if self._frame >= len(self._imagesR):
                 self._frame = 0
                 self.done = True
                 return
@@ -99,6 +99,7 @@ class Hulk(Fighter):
         for key, val in hulk_data.items():
             self.animations[key] = Animation(val['rects'],
                                              val['offpt'],
+                                             val['slide'],
                                              val['image'])
     def update(self,t):
         Fighter.update(self,t)
@@ -106,10 +107,23 @@ class Hulk(Fighter):
             if self.state().done:
                 self.change('stay',t)
                 self.force((0,0))
+        """
         if self.anime() == 'punk':
             if self.state().done:
                 self.change('stay',t)
                 self.force((0,0))
+        """
+    def finish(self,key,t):
+        if key == K_a:
+            self.change('stay',t)
+            self.force((0,0))
+        if key == K_d:
+            self.turn(1)
+            self.change('stay',t)
+            self.force((0,0))
+        if key == K_SPACE:
+            self.change('stay',t)
+            self.force((0,0))
     def control(self,key,t):
         if key == K_s:
             if not self.anime() == 'stay':
@@ -118,24 +132,28 @@ class Hulk(Fighter):
         if key == K_a:
             self.turn(-1) 
             self.change('walk',t)
-            self.force((-.5,0))
+            self.force((-.25,0))
         if key == K_d:
             self.turn(1)
             self.change('walk',t)
-            self.force((.5,0))
+            self.force((.25,0))
         if key == K_SPACE:
             self.change('punk',t)
             self.force((0,0))
 
-def flip_offsets(images, offsets):
+def flip_offsets(images, offsets, slide):
     offsetmin   = min([offset[0] for offset in offsets])
     offsetmax   = max([offset[0] for offset in offsets])
     rights      = [offset[0] + image[2] 
                     for image, offset in zip(images, offsets)]
     rightmin    = min(rights)
     rightmax    = max(rights)
+    """
     return [(rightmax - (rightmax - rightmin) - right - \
             (offsetmax - offsetmin), offset[1])
+            for right, offset in zip(rights, offsets)]
+    """
+    return [(rightmin - right - offsetmax - slide, offset[1])
             for right, offset in zip(rights, offsets)]
 
 def load_sliced_sprites(sprite_images, filename, flip=False):
@@ -151,8 +169,7 @@ def load_sliced_sprites(sprite_images, filename, flip=False):
     return images
 
 def run():
-    hulk = Hulk([50,20])
-    hulk2 = Hulk([50,100])
+    hulk = Hulk([50,220])
     user_keys = [K_a,K_w,K_s,K_d,K_SPACE]
     hulk.turn()
     while True:
@@ -160,17 +177,19 @@ def run():
             if event.type == QUIT               \
                     or event.type == KEYDOWN    \
                     and event.key in [K_q, K_ESCAPE]:
+                pygame.quit()
                 return
             if event.type == KEYDOWN:
                 if event.key in [K_f]:
                     pygame.display.toggle_fullscreen()
                 if event.key in user_keys:
                     hulk.control(event.key,pygame.time.get_ticks())
+            if event.type == KEYUP:
+                if event.key in user_keys:
+                    hulk.finish(event.key,pygame.time.get_ticks())
         screen.blit(background, (0, 0))
         hulk.update(pygame.time.get_ticks())
-        hulk2.update(pygame.time.get_ticks())
         hulk.render(screen)
-        hulk2.render(screen)
         pygame.display.update()
 
 if __name__ == "__main__": run()
