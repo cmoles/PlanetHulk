@@ -79,6 +79,14 @@ class Fighter():
         self.shift()
         screen.blit(self.state().image,self.position)
 
+class Logo(pygame.sprite.Sprite):
+    def __init__(self, location):
+        self.image = load_sliced_sprites(([0, 0, 241, 94],),'HulkLogo.gif')[0]
+        #self.location = (200, 50)
+        self.location = location
+    def render(self,screen):
+        screen.blit(self.image, self.location)
+
 def flip_offsets(images, offsets, slide):
     offsetmin   = min([offset[0] for offset in offsets])
     offsetmax   = max([offset[0] for offset in offsets])

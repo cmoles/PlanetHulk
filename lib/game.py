@@ -1,6 +1,7 @@
 import pygame, random, time, os
 from pygame.constants import *
 from hulk import Hulk
+from objects import Logo
 
 RESOLUTION = (640, 480)
 
@@ -16,7 +17,8 @@ class Game():
         self.background.fill((255,175,175))
         self.screen.blit(self.background, (0, 0))
 
-        self.hulk           = Hulk([50,220])
+        self.hulk           = Hulk((50,280))
+        self.logo           = Logo((200,50))
         #self.hulk.turn()
     def loop(self,):
         user_keys = [K_a,K_w,K_s,K_d,K_SPACE]
@@ -38,4 +40,5 @@ class Game():
             self.screen.blit(self.background, (0, 0))
             self.hulk.update(pygame.time.get_ticks())
             self.hulk.render(self.screen)
+            self.logo.render(self.screen)
             pygame.display.update()
