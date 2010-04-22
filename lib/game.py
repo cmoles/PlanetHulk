@@ -17,7 +17,7 @@ class Game():
         self.screen.blit(self.background, (0, 0))
 
         self.hulk           = Hulk([50,220])
-        self.hulk.turn()
+        #self.hulk.turn()
     def loop(self,):
         user_keys = [K_a,K_w,K_s,K_d,K_SPACE]
         while self.running:

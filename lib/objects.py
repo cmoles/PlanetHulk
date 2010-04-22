@@ -3,19 +3,6 @@ import pygame
 from pygame.locals import *
 from random import randint
 
-
-RESOLUTION = (640, 480)
-
-pygame.init()
-screen       = pygame.display.set_mode(RESOLUTION)
-background   = pygame.Surface(RESOLUTION)
-default_font = pygame.font.get_default_font()
-font         = pygame.font.SysFont(default_font, 20, False)    
-
-background.fill((255,175,175))
-
-screen.blit(background, (0, 0))
-
 class Animation():
     def __init__(self,images,offsets,slide,file_image,flip=False,fps=10):
         self._imagesR       = load_sliced_sprites(images,file_image,flip)
