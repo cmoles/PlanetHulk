@@ -4,12 +4,12 @@ from pygame.locals import *
 from random import randint
 
 class Animation():
-    def __init__(self,images,offsets,slide,file_image,flip=False,fps=10):
+    def __init__(self,images,slide,file_image,flip=False,fps=10):
         self._imagesR       = load_sliced_sprites(images,file_image,flip)
         self._imagesL       = load_sliced_sprites(images,file_image,not flip)
         self.flip           = flip
-        self._offsetsR      = offsets
-        self._offsetsL      = flip_offsets(images,offsets,slide)
+        self._offsetsR      = [a[4:] for a in images]
+        self._offsetsL      = flip_offsets(images,self._offsetsR,slide)
         self._delay         = 1000 / fps
         self.start(0)
     def start(self,t):
@@ -107,9 +107,10 @@ def load_sliced_sprites(sprite_images, filename, flip=False):
     sheet  = pygame.image.load(os.path.join('data', filename)).convert_alpha()
     for srect in sprite_images:
         if flip:
-            simg = pygame.transform.flip(sheet.subsurface(srect), 1, 0).convert()
+            simg = pygame.transform.flip(sheet.subsurface(srect[:4]), \
+                                         1, 0).convert()
         else:
-            simg = sheet.subsurface(srect).convert()
+            simg = sheet.subsurface(srect[:4]).convert()
         simg.set_colorkey(simg.get_at((0, 0)), RLEACCEL)
         images.append(simg)
     return images
