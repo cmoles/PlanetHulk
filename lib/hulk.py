@@ -1,5 +1,5 @@
 from pygame.constants import *
-from objects import Animation, Fighter
+from objects import Animation, Fighter, Logo
 
 HULK_DATA = {
     'walk': {
@@ -100,3 +100,11 @@ class Hulk(Fighter):
                 self.change('punk',t)
                 self.force((0,0))
 
+class HulkLogo(Logo):
+    def __init__(self, location):
+        logo_args = {
+            'images' : ([0, 0, 241, 94],),
+            'file_image' : 'HulkLogo.gif',}
+        Logo.__init__(self,location=location,**logo_args)
+
+    

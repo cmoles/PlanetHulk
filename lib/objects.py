@@ -44,8 +44,10 @@ class Fighter():
         self.direction  = 1
         self.velocity   = (0,0)
     def state(self):
+        """Returns current animation used by Fighter"""
         return self.animations[self._animation]
     def anime(self):
+        """Returns name of current animation used by Fighter"""
         return self._animation
     def shift(self):
         x,y = self.location
@@ -80,9 +82,8 @@ class Fighter():
         screen.blit(self.state().image,self.position)
 
 class Logo(pygame.sprite.Sprite):
-    def __init__(self, location):
-        self.image = load_sliced_sprites(([0, 0, 241, 94],),'HulkLogo.gif')[0]
-        #self.location = (200, 50)
+    def __init__(self,images,file_image,location):
+        self.image = load_sliced_sprites(images,file_image)[0]
         self.location = location
     def render(self,screen):
         screen.blit(self.image, self.location)
@@ -94,11 +95,6 @@ def flip_offsets(images, offsets, slide):
                     for image, offset in zip(images, offsets)]
     rightmin    = min(rights)
     rightmax    = max(rights)
-    """
-    return [(rightmax - (rightmax - rightmin) - right - \
-            (offsetmax - offsetmin), offset[1])
-            for right, offset in zip(rights, offsets)]
-    """
     return [(rightmin - right - offsetmax - slide, offset[1])
             for right, offset in zip(rights, offsets)]
 
