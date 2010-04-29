@@ -4,12 +4,12 @@ from pygame.locals import *
 from random import randint
 
 class Animation():
-    def __init__(self,images,slide,file_image,flip=False,fps=10):
-        self._imagesR       = load_sliced_sprites(images,file_image,flip)
-        self._imagesL       = load_sliced_sprites(images,file_image,not flip)
+    def __init__(self,rects,slide,image,flip=False,fps=10):
+        self._imagesR       = load_sliced_sprites(rects,image,flip)
+        self._imagesL       = load_sliced_sprites(rects,image,not flip)
         self.flip           = flip
-        self._offsetsR      = [a[4:] for a in images]
-        self._offsetsL      = flip_offsets(images,self._offsetsR,slide)
+        self._offsetsR      = [a[4:] for a in rects]
+        self._offsetsL      = flip_offsets(rects,self._offsetsR,slide)
         self._delay         = 1000 / fps
         self.start(0)
     def start(self,t):
@@ -43,31 +43,33 @@ class Fighter():
         self.animations = {}
         self.direction  = 1
         self.velocity   = (0,0)
+    @property
     def state(self):
         """Returns current animation used by Fighter"""
         return self.animations[self._animation]
+    @property
     def anime(self):
         """Returns name of current animation used by Fighter"""
         return self._animation
     def shift(self):
         x,y = self.location
-        j,k = self.state().offpt
+        j,k = self.state.offpt
         self.position = x+j,y+k
     def turn(self,direction=None):
         if direction is None:
             if self.direction is 1:
                 self.direction = -1
-                self.state().flip = True
+                self.state.flip = True
             else:
                 self.direction = 1
-                self.state().flip = False
+                self.state.flip = False
         else:
             self.direction = direction
-            self.state().flip = direction is -1
-    def change(self,state,t):
-        self._animation = state
+            self.state.flip = direction is -1
+    def change(self,anim,t):
+        self._animation = anim
         self.turn(self.direction)
-        self.state().start(t)
+        self.state.start(t)
     def move(self,shift):
         x,y = self.location
         w,v = shift
@@ -76,14 +78,14 @@ class Fighter():
         self.velocity = f
     def update(self,t):
         self.move(self.velocity)
-        self.state().update(t)
+        self.state.update(t)
     def render(self,screen):
         self.shift()
-        screen.blit(self.state().image,self.position)
+        screen.blit(self.state.image,self.position)
 
 class Logo(pygame.sprite.Sprite):
-    def __init__(self,images,file_image,location):
-        self.image = load_sliced_sprites(images,file_image)[0]
+    def __init__(self,rects,image,location):
+        self.image = load_sliced_sprites(rects,image)[0]
         self.location = location
     def render(self,screen):
         screen.blit(self.image, self.location)

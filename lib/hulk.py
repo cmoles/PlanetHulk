@@ -1,7 +1,33 @@
 from pygame.constants import *
 from objects import Animation, Fighter, Logo
 
-HULK_DATA = {
+HULK_STATE_DATA = {
+    'walk': {
+        'force':(.25,0),
+        'click':{
+            K_a     :('walk',-1),
+            K_d     :('walk', 1),
+            K_SPACE :('punk', 0),},
+    },
+    'stay': {
+        'force':(0,0),
+        'click':{
+            K_a     :('walk',-1),
+            K_d     :('walk', 1),
+            K_SPACE :('punk', 0),},
+    },
+    'punk': {
+        'force':(0,0),
+        'click':{
+            K_a     :('walk',-1),
+            K_d     :('walk', 1),
+            K_SPACE :('pun2', 0),},
+        'after':'stay',
+    },
+}
+
+
+HULK_IMAGE_DATA = {
     'walk': {
         'rects':[
             (  8, 156, 30, 66, +4, -1),
@@ -15,7 +41,7 @@ HULK_DATA = {
         'slide':-10,
         'image':'theincrediblehulkwu6.png'
     },
-   'dash': {
+    'dash': {
         'rects':[
             (  3, 243, 51, 45, +6, 17),
             ( 56, 242, 59, 48, -2, 14),
@@ -28,7 +54,7 @@ HULK_DATA = {
         'slide':0,
         'image':'theincrediblehulkwu6.png'
     },
-   'punk': {
+    'punk': {
         'rects':[
             (  5, 394, 51, 62, -6, 2),
             ( 63, 395, 47, 62, -2, 2),
@@ -38,7 +64,7 @@ HULK_DATA = {
         'slide':3,
         'image':'theincrediblehulkwu6.png'
     },
-   'stay': {
+    'stay': {
         'rects':[
             (184,  83, 39, 64, +1, 0),
             (230,  83, 40, 64,  0, 0),
@@ -46,35 +72,29 @@ HULK_DATA = {
             (319,  83, 41, 64, -1, 0),],
         'slide':0,
         'image':'theincrediblehulkwu6.png'
-   }
+    },
 }
 
 class Hulk(Fighter):
     def __init__(self,location):
         Fighter.__init__(self,999,location,) 
         self._animation = 'stay'
-        for key, val in HULK_DATA.items():
-            self.animations[key] = Animation(val['rects'],
-                                             val['slide'],
-                                             val['image'])
+        for key, val in HULK_IMAGE_DATA.items():
+            self.animations[key] = Animation(**val)
     def update(self,t):
         Fighter.update(self,t)
         """
-        if self.anime() is 'jump':
-            if self.state().done:
+        if self.anime is 'jump':
+            if self.state.done:
                 self.change('stay',t)
                 self.force((0,0))
         """
-        if self.anime() is 'punk':
-            if self.state().done:
+        if self.anime is 'punk':
+            if self.state.done:
                 self.change('stay',t)
                 self.force((0,0))
     def finish(self,key,t):
-        if key is K_a:
-            self.change('stay',t)
-            self.force((0,0))
-        if key is K_d:
-            self.turn(1)
+        if key in [K_a,K_d,K_w,K_s]:
             self.change('stay',t)
             self.force((0,0))
         """
@@ -84,9 +104,13 @@ class Hulk(Fighter):
         """
     def control(self,key,t):
         if key is K_s:
-            if not self.anime() is 'stay':
-                self.change('stay',t)
-                self.force((0,0))
+            self.turn(-1)
+            self.change('dash',t)
+            self.force((-1.75,0))
+        if key is K_w:
+            self.turn(1) 
+            self.change('dash',t)
+            self.force((1.75,0))
         if key is K_a:
             self.turn(-1) 
             self.change('walk',t)
@@ -103,8 +127,8 @@ class Hulk(Fighter):
 class HulkLogo(Logo):
     def __init__(self, location):
         logo_args = {
-            'images' : ([0, 0, 241, 94],),
-            'file_image' : 'HulkLogo.gif',}
+            'rects' : ([0, 0, 241, 94],),
+            'image' : 'HulkLogo.gif',}
         Logo.__init__(self,location=location,**logo_args)
 
     
