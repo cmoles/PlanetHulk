@@ -4,6 +4,42 @@ from objects import Animation, Fighter, Logo
 HULK_STATE_DATA = {
     'walk': {
         'force':(.25,0),
+        'nexts':{
+            K_a     :{
+                'state':'walk',
+                'direc':-1
+                'picku':True
+                'backs':''},
+            K_a     :{
+                'state':'walk',
+                'direc':-1},
+            K_a     :{
+                'state':'walk',
+                'direc':-1},
+            K_a     :{
+                'state':'walk',
+                'direc':-1},
+    },
+    'stay': {
+        'force':(0,0),
+        'nexts':{
+            K_a     :('walk',-1),
+            K_d     :('walk', 1),
+            K_SPACE :('punk', 0),},
+    },
+    'punk': {
+        'force':(0,0),
+        'nexts':{
+            K_a     :('walk',-1),
+            K_d     :('walk', 1),
+            K_SPACE :('pun2', 0),},
+        'after':'stay',
+    },
+}
+
+HULK_STATE_DATA_BAK = {
+    'walk': {
+        'force':(.25,0),
         'click':{
             K_a     :('walk',-1),
             K_d     :('walk', 1),
