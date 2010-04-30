@@ -7,8 +7,8 @@ HULK_STATE_DATA = {
         'nexts':{
             K_a     :{
                 'state':'walk',
-                'direc':-1
-                'picku':True
+                'direc':-1,
+                'picku':True,
                 'backs':''},
             K_a     :{
                 'state':'walk',
@@ -19,6 +19,7 @@ HULK_STATE_DATA = {
             K_a     :{
                 'state':'walk',
                 'direc':-1},
+        },
     },
     'stay': {
         'force':(0,0),
@@ -139,14 +140,15 @@ class Hulk(Fighter):
             self.force((0,0))
         """
     def control(self,key,t):
+        """
         if key is K_s:
             self.turn(-1)
             self.change('dash',t)
             self.force((-1.75,0))
+        """
         if key is K_w:
-            self.turn(1) 
             self.change('dash',t)
-            self.force((1.75,0))
+            self.force((1.75,))
         if key is K_a:
             self.turn(-1) 
             self.change('walk',t)

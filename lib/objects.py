@@ -75,7 +75,10 @@ class Fighter():
         w,v = shift
         self.location = x+w,y+v
     def force(self,f):
-        self.velocity = f
+        if len(f) is 2:
+            self.velocity = f
+        if len(f) is 1:
+            self.velocity = f[0] * self.direction, 0
     def update(self,t):
         self.move(self.velocity)
         self.state.update(t)
