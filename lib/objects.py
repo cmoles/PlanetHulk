@@ -56,7 +56,7 @@ class Fighter():
         j,k = self.state.offpt
         self.position = x+j,y+k
     def turn(self,direction=None):
-        if direction is None:
+        if not direction:
             if self.direction is 1:
                 self.direction = -1
                 self.state.flip = True

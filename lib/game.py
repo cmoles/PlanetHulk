@@ -1,8 +1,11 @@
 import pygame, random, time, os
 from pygame.constants import *
+from engine import Keyboard
 from hulk import Hulk, HulkLogo
 
 RESOLUTION = (640, 480)
+HULK_START = (50, 280)
+HULK_LOGO  = (200, 50)
 
 class Game():
     def __init__(self,):
@@ -16,11 +19,14 @@ class Game():
         self.background.fill((255,175,175))
         self.screen.blit(self.background, (0, 0))
 
-        self.hulk           = Hulk((50,280))
-        self.logo           = HulkLogo((200,50))
-        #self.hulk.turn()
+        self.keyboard       = Keyboard()
+
+        self.hulk           = Hulk(HULK_START) # user 1
+        self.logo           = HulkLogo(HULK_LOGO)
+        
     def loop(self,):
         user_keys = [K_a,K_w,K_s,K_d,K_SPACE]
+        self.keyboard.attach('user1',user_keys)
         while self.running:
             for event in pygame.event.get():
                 if event.type is QUIT               \
@@ -32,6 +38,8 @@ class Game():
                     if event.key in [K_f]:
                         pygame.display.toggle_fullscreen()
                     if event.key in user_keys:
+                        self.keyboard.keys_down((event.key,),
+                                                pygame.time.get_ticks())
                         self.hulk.control(event.key,pygame.time.get_ticks())
                 if event.type is KEYUP:
                     if event.key in user_keys:

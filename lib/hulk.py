@@ -149,6 +149,10 @@ class Hulk(Fighter):
         if key is K_w:
             self.change('dash',t)
             self.force((1.75,))
+        if key is K_s:
+            self.turn()
+            self.change('dash',t)
+            self.force((1.75,))
         if key is K_a:
             self.turn(-1) 
             self.change('walk',t)
