@@ -43,10 +43,6 @@ class Fighter():
         self.health     = health
         self.location   = location
         self.position   = location
-        #self._animation = ''
-        #self.animations = {}
-        #self.direction  = 1
-        #self.velocity   = (0,0)
     @property
     def state(self):
         """Returns current animation used by Fighter"""
