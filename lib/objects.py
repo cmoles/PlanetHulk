@@ -35,14 +35,18 @@ class Animation():
             self._last_update = t
 
 class Fighter():
+    _animation = []
+    animations = {}
+    direction  = 1
+    velocity   = (0,0)
     def __init__(self,health,location,):
         self.health     = health
         self.location   = location
         self.position   = location
-        self._animation = ''
-        self.animations = {}
-        self.direction  = 1
-        self.velocity   = (0,0)
+        #self._animation = ''
+        #self.animations = {}
+        #self.direction  = 1
+        #self.velocity   = (0,0)
     @property
     def state(self):
         """Returns current animation used by Fighter"""

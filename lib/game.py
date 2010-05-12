@@ -21,8 +21,10 @@ class Game():
 
         self.keyboard       = Keyboard()
 
-        self.hulk           = Hulk(HULK_START) # user 1
         self.logo           = HulkLogo(HULK_LOGO)
+
+        ## Let's make User1 a Hulk
+        self.hulk           = Hulk(HULK_START)
         
     def loop(self,):
         user_keys = [K_a,K_w,K_s,K_d,K_SPACE]
@@ -38,7 +40,7 @@ class Game():
                     if event.key in [K_f]:
                         pygame.display.toggle_fullscreen()
                     if event.key in user_keys:
-                        self.keyboard.keys_down((event.key,),
+                        self.keyboard.key_down(event.key,
                                                 pygame.time.get_ticks())
                         self.hulk.control(event.key,pygame.time.get_ticks())
                 if event.type is KEYUP:
