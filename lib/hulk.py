@@ -1,69 +1,6 @@
 from pygame.constants import *
 from objects import Animation, Fighter, Logo
 
-HULK_STATE_DATA = {
-    'walk': {
-        'force':(.25,0),
-        'nexts':{
-            K_a     :{
-                'state':'walk',
-                'direc':-1,
-                'picku':True,
-                'backs':''},
-            K_a     :{
-                'state':'walk',
-                'direc':-1},
-            K_a     :{
-                'state':'walk',
-                'direc':-1},
-            K_a     :{
-                'state':'walk',
-                'direc':-1},
-        },
-    },
-    'stay': {
-        'force':(0,0),
-        'nexts':{
-            K_a     :('walk',-1),
-            K_d     :('walk', 1),
-            K_SPACE :('punk', 0),},
-    },
-    'punk': {
-        'force':(0,0),
-        'nexts':{
-            K_a     :('walk',-1),
-            K_d     :('walk', 1),
-            K_SPACE :('pun2', 0),},
-        'after':'stay',
-    },
-}
-
-HULK_STATE_DATA_BAK = {
-    'walk': {
-        'force':(.25,0),
-        'click':{
-            K_a     :('walk',-1),
-            K_d     :('walk', 1),
-            K_SPACE :('punk', 0),},
-    },
-    'stay': {
-        'force':(0,0),
-        'click':{
-            K_a     :('walk',-1),
-            K_d     :('walk', 1),
-            K_SPACE :('punk', 0),},
-    },
-    'punk': {
-        'force':(0,0),
-        'click':{
-            K_a     :('walk',-1),
-            K_d     :('walk', 1),
-            K_SPACE :('pun2', 0),},
-        'after':'stay',
-    },
-}
-
-
 HULK_IMAGE_DATA = {
     'walk': {
         'rects':[
@@ -76,7 +13,8 @@ HULK_IMAGE_DATA = {
             (285, 160, 47, 65, -5, -1),
             (344, 159, 46, 64, -5, -1),],
         'slide':-10,
-        'image':'theincrediblehulkwu6.png'
+        'image':'theincrediblehulkwu6.png',
+        'event':{'stay':()},
     },
     'dash': {
         'rects':[
@@ -89,7 +27,7 @@ HULK_IMAGE_DATA = {
             (395, 245, 66, 45, -6, 17),
             (469, 239, 55, 53, +3,  9),],
         'slide':0,
-        'image':'theincrediblehulkwu6.png'
+        'image':'theincrediblehulkwu6.png',
     },
     'punk': {
         'rects':[
@@ -99,7 +37,7 @@ HULK_IMAGE_DATA = {
             (191, 395, 47, 62,  3, 2),
             (250, 394, 69, 63,  3, 1),],
         'slide':3,
-        'image':'theincrediblehulkwu6.png'
+        'image':'theincrediblehulkwu6.png',
     },
     'stay': {
         'rects':[
@@ -108,7 +46,7 @@ HULK_IMAGE_DATA = {
             (275,  83, 40, 64,  0, 0),
             (319,  83, 41, 64, -1, 0),],
         'slide':0,
-        'image':'theincrediblehulkwu6.png'
+        'image':'theincrediblehulkwu6.png',
     },
 }
 

@@ -4,7 +4,7 @@ from pygame.locals import *
 from random import randint
 
 class Animation():
-    def __init__(self,rects,slide,image,flip=False,fps=10):
+    def __init__(self,rects,slide,image,flip=False,fps=10,**args):
         self._imagesR       = load_sliced_sprites(rects,image,flip)
         self._imagesL       = load_sliced_sprites(rects,image,not flip)
         self.flip           = flip
